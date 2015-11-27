@@ -16,6 +16,9 @@
 #include <algorithm>
 
 #include <ssiloti/http/headers_map.hpp>
+#include <ssiloti/http/parsers/headers.hpp>
+#include <ssiloti/http/generators/headers.hpp>
+#include <ssiloti/http/generators/string_message.hpp>
 
 namespace http
 {
