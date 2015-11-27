@@ -21,6 +21,7 @@
 #include <boost/asio/placeholders.hpp>
 
 #include <boost/bind.hpp>
+#include <boost/bind/protect.hpp>
 #include <boost/function.hpp>
 #include <boost/variant/variant.hpp>
 
