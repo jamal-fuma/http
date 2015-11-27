@@ -119,10 +119,10 @@ namespace http
             template <typename Response, typename Handler>
             void read_next_response(Response & response, Handler handler)
             {
-                read_message(boost::system::error_code(),
-                             0,
-                             boost::make_shared<parsers::message_state<Response, typename base_type::recv_buffer_t::iterator> >(response),
-                             boost::protect(boost::bind(&this_type::response_read<Handler>, shared_from_this(), boost::asio::placeholders::error, handler)));
+                base_type::read_message(boost::system::error_code(),
+                                        0,
+                                        boost::make_shared<parsers::message_state<Response, typename base_type::recv_buffer_t::iterator> >(response),
+                                        boost::protect(boost::bind(&this_type::response_read<Handler>, shared_from_this(), boost::asio::placeholders::error, handler)));
             }
 
             template <typename Handler>
