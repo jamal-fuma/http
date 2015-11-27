@@ -10,6 +10,9 @@
 #ifndef HTTP_HEADERS_MAP_HPP
 #define HTTP_HEADERS_MAP_HPP
 
+#include <ssiloti/http/parsers/headers.hpp>
+#include <ssiloti/http/generators/headers.hpp>
+
 #include <boost/fusion/support/pair.hpp>
 
 #include <boost/mpl/begin_end.hpp>
