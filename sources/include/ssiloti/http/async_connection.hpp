@@ -204,8 +204,8 @@ namespace http
                             }
 
                         private:
-                            mutable std::vector<boost::asio::const_buffer> & ret;
                             generation_state & state_;
+                            std::vector<boost::asio::const_buffer> & ret;
                     };
 
                     std::vector<boost::asio::const_buffer> iovec()
