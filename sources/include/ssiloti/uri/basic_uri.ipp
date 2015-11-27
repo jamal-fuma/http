@@ -10,7 +10,7 @@
 #ifndef URI_BASIC_URI_IPP
 #define URI_BASIC_URI_IPP
 
-#include <uri/parsers/generic_uri.hpp>
+#include <ssiloti/uri/parsers/generic_uri.hpp>
 #include <boost/spirit/home/qi/parse.hpp>
 
 namespace uri {
