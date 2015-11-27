@@ -32,6 +32,11 @@ namespace http
 {
     namespace parsers
     {
+        using boost::phoenix::val;
+        using boost::spirit::qi::lit;
+        using boost::spirit::qi::uint_;
+        using boost::spirit::qi::uint_parser;
+
 
         template <typename Header, typename InputIterator>
         bool parse_header(Header & header, InputIterator begin, InputIterator end)
