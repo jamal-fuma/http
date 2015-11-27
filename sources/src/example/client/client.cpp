@@ -31,9 +31,13 @@ void handle_response(const boost::system::error_code & error, boost::shared_ptr<
     std::cout << res->body;
 }
 
-int main()
+int main(int argc, char ** argv)
 {
-    boost::asio::io_service service;
-    http::async_request<std::string>(service, "GET", "http://127.0.0.1:1234", handle_response);
-    service.run();
+    if(argc > 1)
+    {
+        boost::asio::io_service service;
+        http::async_request<std::string>(service, "GET", argv[1], handle_response);
+        service.run();
+    }
+    return 0;
 }
