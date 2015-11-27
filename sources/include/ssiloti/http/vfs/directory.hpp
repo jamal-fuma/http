@@ -34,7 +34,7 @@ namespace http
                     std::string::const_iterator next_segment_begin = segment_end;
                     ++next_segment_begin;
                     std::string::const_iterator next_segment_end = std::find(next_segment_begin, path.end(), '/');
-                    entries_type::const_iterator entry = entries_.find(std::string(next_segment_begin, next_segment_end));
+                    typename entries_type::const_iterator entry = entries_.find(std::string(next_segment_begin, next_segment_end));
                     if(entry != entries_.end())
                     {
                         entry->second.dispatch(ctx, path, next_segment_begin, next_segment_end);
