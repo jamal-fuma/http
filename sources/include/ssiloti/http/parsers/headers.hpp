@@ -127,6 +127,7 @@ namespace http
         template <typename InputIterator>
         bool parse_header(headers::mime_version & header, InputIterator begin, InputIterator end)
         {
+            basic_rules<InputIterator> b;
             return boost::spirit::qi::phrase_parse(begin, end, uint_parser<unsigned, 10, 1, 1>() >> '.' >> uint_parser<unsigned, 10, 1, 1>(), b.skipper, header.second) && begin == end;
         }
 
