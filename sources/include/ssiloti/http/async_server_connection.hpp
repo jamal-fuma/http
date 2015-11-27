@@ -73,14 +73,14 @@ namespace http
             };
 
         public:
-            typedef typename recv_buffer_t::const_iterator parse_iterator_type;
+            typedef typename this_type::recv_buffer_t::const_iterator parse_iterator_type;
 
             template <typename Handler>
             async_server_connection(ip::tcp::acceptor & acceptor, Handler handler)
                 : async_connection<Stream>(acceptor.get_io_service())
                 , active_request_state_(active_request_)
             {
-                acceptor.async_accept(socket_, handler);
+                acceptor.async_accept(this_type::next_layer(), handler);
             }
 
             const std::string & remote_host_name()
@@ -92,7 +92,7 @@ namespace http
             void read_request(Handler handler)
             {
                 active_request_.clear();
-                read_message(
+                this_type::read_message(
                     boost::system::error_code(),
                     0,
                     &active_request_state_,
@@ -108,7 +108,7 @@ namespace http
             void write_response(Response response)
             {
                 active_request_state_.reset();
-                send_queue_.push_back(
+                this_type::send_queue_.push_back(
                     boost::bind(
                         &this_type::write_next_response<Response>,
                         this,
@@ -116,19 +116,19 @@ namespace http
                     )
                 );
 
-                if(send_queue_.size() == 1)
-                    send_queue_.back()();
+                if(this_type::send_queue_.size() == 1)
+                    this_type::send_queue_.back()();
             }
 
         protected:
             template <typename Response>
             void write_next_response(Response response)
             {
-                generation_iterator sink(start_generation());
+                auto sink(this_type::start_generation());
                 generators::generate_message(sink, response);
                 boost::asio::async_write(
-                    socket_,
-                    vectorize(sink),
+                    this_type::next_layer(),
+                    this_type::vectorize(sink),
                     boost::bind(
                         &this_type::response_written,
                         this->shared_from_this(),
@@ -142,13 +142,13 @@ namespace http
             {
                 if(error)
                 {
-                    socket_.close();
+                    this_type::next_layer().close();
                     return;
                 }
 
-                send_queue_.pop_front();
-                if(!send_queue_.empty())
-                    send_queue_.back()();
+                this_type::send_queue_.pop_front();
+                if(!this_type::send_queue_.empty())
+                    this_type::send_queue_.back()();
             }
 
 
