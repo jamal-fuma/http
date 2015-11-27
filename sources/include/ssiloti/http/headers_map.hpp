@@ -189,7 +189,8 @@ namespace http
                     std::string to_string() const
                     {
                         std::string value;
-                        boost::apply_visitor(generate_visitor<std::back_insert_iterator<std::string> >(std::back_inserter(value)), var_);
+                        auto inserter = std::back_inserter<std::string>(value);
+                        boost::apply_visitor(generate_visitor<decltype(inserter)>(inserter), var_);
                         return value;
                     }
 
