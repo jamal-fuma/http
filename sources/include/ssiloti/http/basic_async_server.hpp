@@ -90,7 +90,7 @@ namespace http
                     }
             };
 
-            virtual void incoming_request(typename context_type ctx) = 0;
+            virtual void incoming_request(context_type ctx) = 0;
 
         private:
             void handle_accepted(const boost::system::error_code & error)
