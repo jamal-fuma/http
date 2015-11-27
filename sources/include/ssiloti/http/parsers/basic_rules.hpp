@@ -10,7 +10,7 @@
 #ifndef HTTP_BASIC_RULES_HPP
 #define HTTP_BASIC_RULES_HPP
 
-#include <abnf/core_rules.hpp>
+#include <ssiloti/abnf/core_rules.hpp>
 
 #include <boost/spirit/home/qi/nonterminal/grammar.hpp>
 #include <boost/spirit/home/qi/directive/lexeme.hpp>
