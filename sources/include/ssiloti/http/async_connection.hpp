@@ -350,10 +350,10 @@ namespace http
             }
 
         protected:
+            next_layer_type socket_;
             recv_buffer_t recv_buffer_;
             typename recv_buffer_t::iterator valid_begin_, valid_end_;
 
-            next_layer_type socket_;
             generation_state send_buffer_;
             send_queue_t send_queue_;
     };
