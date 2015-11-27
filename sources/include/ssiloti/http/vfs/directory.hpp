@@ -47,7 +47,7 @@ namespace http
 
                 void add_node(std::string name, node<Context> & node)
                 {
-                    entries_.insert(entries_type::value_type(name, node));
+                    entries_.emplace(name, node);
                 }
 
             private:
