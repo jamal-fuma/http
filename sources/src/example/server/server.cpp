@@ -40,5 +40,7 @@ int main()
     io_service service;
     boost::shared_ptr<example_server> example(boost::make_shared<example_server>(boost::ref(service), ip::tcp::endpoint(ip::tcp::v4(), 1234)));
     example->start();
-    service.run();
+    while(1){
+        service.run();
+    }
 }
