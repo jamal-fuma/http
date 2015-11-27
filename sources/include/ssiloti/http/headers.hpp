@@ -24,6 +24,7 @@
 #include <boost/fusion/algorithm/transformation/join.hpp>
 #include <boost/fusion/support/pair.hpp>
 #include <boost/mpl/string.hpp>
+#include <boost/spirit/include/qi_uint.hpp>
 
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
