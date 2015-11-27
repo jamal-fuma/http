@@ -153,7 +153,7 @@ namespace http
 
 
             request_type active_request_;
-            parsers::message_state<request_type, typename recv_buffer_t::iterator> active_request_state_;
+            parsers::message_state<request_type, typename this_type::recv_buffer_t::iterator> active_request_state_;
             std::string remote_host_name_;
     };
 
