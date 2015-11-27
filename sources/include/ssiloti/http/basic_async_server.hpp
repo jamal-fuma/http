@@ -66,6 +66,11 @@ namespace http
                         : server_(serv), connection(con), request(req)
                     {}
 
+                private:
+                    boost::shared_ptr<basic_async_server<Headers, Body> > server_;
+
+                public:
+
                     boost::shared_ptr<const connection_type> connection;
                     const typename connection_type::request_type & request;
 
@@ -83,9 +88,6 @@ namespace http
                                            ))
                         );
                     }
-
-                private:
-                    boost::shared_ptr<basic_async_server<Headers, Body> > server_;
             };
 
             virtual void incoming_request(typename context_type ctx) = 0;
