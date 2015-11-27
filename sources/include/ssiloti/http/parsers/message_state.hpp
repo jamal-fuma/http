@@ -187,8 +187,8 @@ namespace http
                 message_type & msg_;
                 iterator cur_, header_sep_;
                 body_parser<typename message_type::headers_type, typename message_type::body_type> body_parser_;
-                std::size_t content_length_remaining_;
                 state state_;
+                std::size_t content_length_remaining_;
         };
 
     }
