@@ -12,64 +12,68 @@
 #ifndef URI_PARSERS_AUTHORITY_HPP
 #define URI_PARSERS_AUTHORITY_HPP
 
-#include <uri/basic_authority.hpp>
-#include <uri/parsers/characters.hpp>
+#include <ssiloti/uri/basic_authority.hpp>
+#include <ssiloti/uri/parsers/characters.hpp>
 
 #include <boost/spirit/home/qi/numeric/uint.hpp>
 #include <boost/spirit/home/qi/directive/as.hpp>
 #include <boost/spirit/home/qi/nonterminal/grammar.hpp>
 
-namespace uri { namespace parsers {
-
-namespace qi = boost::spirit::qi;
-
-template <typename Iterator, typename String>
-struct authority
-    : characters<Iterator, String>
-    , boost::spirit::qi::grammar<Iterator, basic_authority<String>()>
+namespace uri
 {
-    typedef String string_type;
-
-    authority() : authority::base_type(start, "authority")
+    namespace parsers
     {
-        // user_info = *( unreserved / pct-encoded / sub-delims / ":" )
-        user_info %= *(this->unreserved | this->pct_encoded | this->sub_delims | qi::char_(":"));
 
-        // dec-octet = DIGIT / %x31-39 DIGIT / "1" 2DIGIT / "2" %x30-34 DIGIT / "25" %x30-35
-        dec_octet %=
+        namespace qi = boost::spirit::qi;
+
+        template <typename Iterator, typename String>
+        struct authority
+            : characters<Iterator, String>
+        , boost::spirit::qi::grammar<Iterator, basic_authority<String>()>
+          {
+              typedef String string_type;
+
+              authority() : authority::base_type(start, "authority")
+        {
+            // user_info = *( unreserved / pct-encoded / sub-delims / ":" )
+            user_info %= *(this->unreserved | this->pct_encoded | this->sub_delims | qi::char_(":"));
+
+            // dec-octet = DIGIT / %x31-39 DIGIT / "1" 2DIGIT / "2" %x30-34 DIGIT / "25" %x30-35
+            dec_octet %=
                 !(qi::lit('0') >> qi::digit)
-            >> qi::uint_parser<boost::uint8_t, 10, 1, 3>();
+                >> qi::uint_parser<boost::uint8_t, 10, 1, 3>();
 
-        // IPv4address = dec-octet "." dec-octet "." dec-octet "." dec-octet
-        ipv4address %= qi::raw[dec_octet >> qi::repeat(3)[qi::lit('.') >> dec_octet]];
+            // IPv4address = dec-octet "." dec-octet "." dec-octet "." dec-octet
+            ipv4address %= qi::raw[dec_octet >> qi::repeat(3)[qi::lit('.') >> dec_octet]];
 
-        // reg-name = *( unreserved / pct-encoded / sub-delims )
-        // Don't allow trailing commas. This is a hack to work around abiguities in the grammars
-        // of certain HTTP headers such a Via.
-        reg_name %= qi::lexeme[*(this->unreserved | this->pct_encoded | (this->sub_delims - ", "))];
+            // reg-name = *( unreserved / pct-encoded / sub-delims )
+            // Don't allow trailing commas. This is a hack to work around abiguities in the grammars
+            // of certain HTTP headers such a Via.
+            reg_name %= qi::lexeme[*(this->unreserved | this->pct_encoded | (this->sub_delims - ", "))];
 
-        // TODO, host = IP-literal / IPv4address / reg-name
-        host %= ipv4address | reg_name;
+            // TODO, host = IP-literal / IPv4address / reg-name
+            host %= ipv4address | reg_name;
 
-        // authority_rule = [ userinfo "@" ] host [ ":" port ]
-        authority_rule %= (-(boost::spirit::as_string[user_info >> qi::lit('@')]) >> host >> -(qi::lit(':') >> qi::ushort_));
+            // authority_rule = [ userinfo "@" ] host [ ":" port ]
+            authority_rule %= (-(boost::spirit::as_string[user_info >> qi::lit('@')]) >> host >> -(qi::lit(':') >> qi::ushort_));
 
-        start = authority_rule.alias();
+            start = authority_rule.alias();
 
-    }
+        }
 
-    boost::spirit::qi::rule<Iterator, string_type()>
+        boost::spirit::qi::rule<Iterator, string_type()>
         dec_octet, ipv4address, reg_name, host;
 
-    boost::spirit::qi::rule<Iterator, string_type()>
+        boost::spirit::qi::rule<Iterator, string_type()>
         user_info;
 
-private:
-    boost::spirit::qi::rule<Iterator, typename detail::authority_tuple<string_type>::type()> authority_rule;
+        private:
+        boost::spirit::qi::rule<Iterator, typename detail::authority_tuple<string_type>::type()> authority_rule;
 
-    boost::spirit::qi::rule<Iterator, basic_authority<string_type>()> start;
-};
+        boost::spirit::qi::rule<Iterator, basic_authority<string_type>()> start;
+          };
 
-} }
+    }
+}
 
 #endif

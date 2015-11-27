@@ -8,13 +8,13 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <http/basic_server_impl.hpp>
-#include <http/basic_async_server.hpp>
+#include <ssiloti/http/basic_server_impl.hpp>
+#include <ssiloti/http/basic_async_server.hpp>
 
-#include <http/string_message.hpp>
-#include <http/generators/string_message.hpp>
+#include <ssiloti/http/string_message.hpp>
+#include <ssiloti/http/generators/string_message.hpp>
 
-#include <http/vfs/server.hpp>
+#include <ssiloti/http/vfs/server.hpp>
 
 #include <boost/make_shared.hpp>
 
@@ -22,25 +22,25 @@ typedef http::vfs::server<http::basic_async_server<http::headers::map, std::stri
 
 class example_server : public server_type
 {
-public:
-    example_server(boost::asio::io_service& io, boost::asio::ip::tcp::endpoint listen)
-        : server_type(io, listen)
-    {}
+    public:
+        example_server(boost::asio::io_service & io, boost::asio::ip::tcp::endpoint listen)
+            : server_type(io, listen)
+        {}
 };
 
 class example_node : public http::vfs::node<server_type::context_type>
 {
     public:
-    virtual void dispatch(context_type ctx,
-                          const std::string& path,
-                          std::string::const_iterator segment_begin,
-                          std::string::const_iterator segment_end)
-    {
-        boost::shared_ptr<http::string_response> response(boost::make_shared<http::string_response>());
-        response->body = "Hello, World";
-        response->headers.at<http::headers::content_type>() = "text/plain";
-        ctx.connection->write_response(response);
-    }
+        virtual void dispatch(context_type ctx,
+                              const std::string & path,
+                              std::string::const_iterator segment_begin,
+                              std::string::const_iterator segment_end)
+        {
+            boost::shared_ptr<http::string_response> response(boost::make_shared<http::string_response>());
+            response->body = "Hello, World";
+            response->headers.at<http::headers::content_type>() = "text/plain";
+            ctx.connection->write_response(response);
+        }
 };
 
 int main()

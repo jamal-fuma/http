@@ -8,9 +8,9 @@
 //
 //
 
-#include <http/basic_request.hpp>
-#include <http/parsers/request.hpp>
-#include <http/generators/request.hpp>
+#include <ssiloti/http/basic_request.hpp>
+#include <ssiloti/http/parsers/request.hpp>
+#include <ssiloti/http/generators/request.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include <boost/mpl/map/map0.hpp>
@@ -23,7 +23,7 @@
 #include "TestHelper.hpp"
 
 struct FixtureData
-	: public Fuma::Test::Fixture
+    : public Fuma::Test::Fixture
 {
 };
 

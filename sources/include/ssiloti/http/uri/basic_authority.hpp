@@ -19,119 +19,128 @@
 #include <boost/optional.hpp>
 #include <boost/cstdint.hpp>
 
-namespace uri {
-
-template <typename String>
-class basic_authority
+namespace uri
 {
-public:
-    typedef String string_type;
+
+    template <typename String>
+    class basic_authority
+    {
+        public:
+            typedef String string_type;
 
 #if 0
-    template <typename Iterator>
-    static const boost::spirit::qi::rule<Iterator, basic_authority<string_type>()>& parse_rule();
+            template <typename Iterator>
+            static const boost::spirit::qi::rule<Iterator, basic_authority<string_type>()> & parse_rule();
 
-    string_type userinfo() const
-    {
-        return userinfo_ ? *userinfo_ : string_type();
-    }
+            string_type userinfo() const
+            {
+                return userinfo_ ? *userinfo_ : string_type();
+            }
 
-    void userinfo(const string_type& ui)
-    {
-        userinfo_ = ui;
-    }
+            void userinfo(const string_type & ui)
+            {
+                userinfo_ = ui;
+            }
 
-    const string_type& host() const
-    {
-        return host_;
-    }
+            const string_type & host() const
+            {
+                return host_;
+            }
 
-    void host(const string_type& h)
-    {
-        host_ = h;
-    }
+            void host(const string_type & h)
+            {
+                host_ = h;
+            }
 #endif
 
-    void clear()
+            void clear()
+            {
+
+            }
+
+            boost::optional<string_type> userinfo;
+            string_type host;
+            boost::optional<boost::uint16_t> port;
+    };
+
+    namespace detail
     {
-        
-    }
 
-    boost::optional<string_type> userinfo;
-    string_type host;
-    boost::optional<boost::uint16_t> port;
-};
+        template <typename String>
+        struct authority_tuple
+        {
+            typedef boost::fusion::tuple<
+            boost::optional<String> &,
+                  String &,
+                  boost::optional<boost::uint16_t> &
+                  > type;
+        };
 
-namespace detail {
+        template <typename String>
+        struct const_authority_tuple
+        {
+            typedef boost::fusion::tuple<
+            const boost::optional<String> &,
+                  const String &,
+                  const boost::optional<boost::uint16_t> &
+                  > type;
+        };
 
-template <typename String>
-struct authority_tuple
-{
-    typedef boost::fusion::tuple<
-        boost::optional<String>&,
-        String&,
-        boost::optional<boost::uint16_t>&
-    > type;
-};
-
-template <typename String>
-struct const_authority_tuple
-{
-    typedef boost::fusion::tuple<
-        const boost::optional<String>&,
-        const String&,
-        const boost::optional<boost::uint16_t>&
-    > type;
-};
-
-} // namespace detail
+    } // namespace detail
 
 } // namespace uri
 
-namespace boost { namespace spirit { namespace traits {
-
-template <typename String>
-struct transform_attribute<
-    uri::basic_authority<String>,
-    typename uri::detail::authority_tuple<String>::type,
-    boost::spirit::qi::domain
->
+namespace boost
 {
-    typedef typename uri::detail::authority_tuple<String>::type type;
-
-    static type pre(uri::basic_authority<String>& exposed)
+    namespace spirit
     {
-        return boost::fusion::tie(
-                exposed.userinfo,
-                exposed.host,
-                exposed.port
-            );
+        namespace traits
+        {
+
+            template <typename String>
+            struct transform_attribute<
+                uri::basic_authority<String>,
+                typename uri::detail::authority_tuple<String>::type,
+                boost::spirit::qi::domain
+                >
+            {
+                typedef typename uri::detail::authority_tuple<String>::type type;
+
+                static type pre(uri::basic_authority<String> & exposed)
+                {
+                    return boost::fusion::tie(
+                               exposed.userinfo,
+                               exposed.host,
+                               exposed.port
+                           );
+                }
+
+                static void post(uri::basic_authority<String> &, type const &) { }
+
+                static void fail(uri::basic_authority<String> & val) { }
+            };
+
+            template <typename String>
+            struct transform_attribute<
+                const uri::basic_authority<String>,
+                typename uri::detail::const_authority_tuple<String>::type,
+                boost::spirit::karma::domain
+                >
+            {
+                typedef typename uri::detail::const_authority_tuple<String>::type type;
+
+                static type pre(const uri::basic_authority<String> & exposed)
+                {
+                    return type(
+                               exposed.userinfo,
+                               exposed.host,
+                               exposed.port
+                           );
+                }
+            };
+
+        }
     }
-
-    static void post(uri::basic_authority<String>&, type const&) { }
-
-    static void fail(uri::basic_authority<String>& val) { }
-};
-
-template <typename String>
-struct transform_attribute<
-    const uri::basic_authority<String>,
-    typename uri::detail::const_authority_tuple<String>::type,
-    boost::spirit::karma::domain
->
-{
-    typedef typename uri::detail::const_authority_tuple<String>::type type;
-
-    static type pre(const uri::basic_authority<String>& exposed)
-    {
-        return type(
-                exposed.userinfo,
-                exposed.host,
-                exposed.port
-            );
-    }
-};
-
-} } } // namespace traits namespace spirit namespace boost
+} // namespace traits namespace spirit namespace boost
 
 #endif

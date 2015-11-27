@@ -66,29 +66,29 @@ namespace Fuma
 
                 // teardown
                 ~Fixture()
-		{
-		    // cleanup per test fixture data
-		}
+                {
+                    // cleanup per test fixture data
+                }
 
-		// test helpers
-		std::string fixture_load(const std::string & fname)
-		{
-			// glue paths together
-			boost::filesystem::path full_path(FIXTURES_DIR);
-			full_path /= fname.c_str(); 
+                // test helpers
+                std::string fixture_load(const std::string & fname)
+                {
+                    // glue paths together
+                    boost::filesystem::path full_path(FIXTURES_DIR);
+                    full_path /= fname.c_str();
 
-			// get a suitable string
-			std::string abs_fname = 
-				boost::filesystem::canonical(full_path).string();
+                    // get a suitable string
+                    std::string abs_fname =
+                        boost::filesystem::canonical(full_path).string();
 
-			uintmax_t size = boost::filesystem::file_size(full_path);
+                    uintmax_t size = boost::filesystem::file_size(full_path);
 
-			// read the file into the vector
-			std::vector<char>(size).swap(m_data);
-			std::ifstream input(abs_fname.c_str());
-			input.read(&m_data[0], size);
+                    // read the file into the vector
+                    std::vector<char>(size).swap(m_data);
+                    std::ifstream input(abs_fname.c_str());
+                    input.read(&m_data[0], size);
 
-			return abs_fname;
+                    return abs_fname;
                 }
 
                 // public data the testcases can use

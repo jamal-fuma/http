@@ -1,7 +1,7 @@
 #include "TestHelper.hpp"
 
 struct FixtureData
-	: public Fuma::Test::Fixture
+    : public Fuma::Test::Fixture
 {
 };
 

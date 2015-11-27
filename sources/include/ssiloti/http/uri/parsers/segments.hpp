@@ -12,38 +12,42 @@
 #ifndef URI_PARSERS_SEGMENTS_HPP
 #define URI_PARSERS_SEGMENTS_HPP
 
-#include <uri/parsers/characters.hpp>
+#include <ssiloti/uri/parsers/characters.hpp>
 
 #include <boost/spirit/home/qi/directive/raw.hpp>
 #include <boost/spirit/home/qi/auxiliary/eps.hpp>
 
-namespace uri { namespace parsers {
-
-template <typename Iterator, typename String>
-struct segments : public characters<Iterator, String>
+namespace uri
 {
-    typedef String string_type;
-
-    segments()
+    namespace parsers
     {
-        using namespace boost::spirit;
 
-        // segment = *pchar
-        segment %= qi::raw[*this->pchar];
+        template <typename Iterator, typename String>
+        struct segments : public characters<Iterator, String>
+        {
+            typedef String string_type;
 
-        // segment-nz = 1*pchar
-        segment_nz %= qi::raw[+this->pchar];
+            segments()
+            {
+                using namespace boost::spirit;
 
-        // segment-nz-nc = 1*( unreserved / pct-encoded / sub-delims / "@" )
-        segment_nz_nc %= qi::raw[
-            +(this->unreserved | this->pct_encoded | this->sub_delims | qi::char_("@"))
-        ];
+                // segment = *pchar
+                segment %= qi::raw[*this->pchar];
+
+                // segment-nz = 1*pchar
+                segment_nz %= qi::raw[+this->pchar];
+
+                // segment-nz-nc = 1*( unreserved / pct-encoded / sub-delims / "@" )
+                segment_nz_nc %= qi::raw[
+                                     +(this->unreserved | this->pct_encoded | this->sub_delims | qi::char_("@"))
+                                 ];
+            }
+
+            boost::spirit::qi::rule<Iterator, string_type()>
+            segment, segment_nz, segment_nz_nc;
+        };
+
     }
-
-    boost::spirit::qi::rule<Iterator, string_type()>
-        segment, segment_nz, segment_nz_nc;
-};
-
-} }
+}
 
 #endif

@@ -7,7 +7,7 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-#include <http/parsers/headers.hpp>
+#include <ssiloti/http/parsers/headers.hpp>
 #include <boost/test/unit_test.hpp>
 #include <algorithm>
 
@@ -230,9 +230,9 @@ void test_content_type()
     BOOST_REQUIRE(parsers::parse_header(ct, testv_pass.begin(), testv_pass.end()));
 }
 
-void init_headers_suite(int, char*[])
+void init_headers_suite(int, char * [])
 {
-    boost::unit_test::test_suite* test = BOOST_TEST_SUITE("headers");
+    boost::unit_test::test_suite * test = BOOST_TEST_SUITE("headers");
     test->add(BOOST_TEST_CASE(&test_token_map<headers::cache_control>));
     test->add(BOOST_TEST_CASE(&test_token_map<headers::pragma>));
     test->add(BOOST_TEST_CASE(&test_token_vector<headers::connection>));

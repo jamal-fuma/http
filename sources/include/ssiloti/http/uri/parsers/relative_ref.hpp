@@ -11,79 +11,84 @@
 #ifndef URI_PARSERS_RELATIVE_REF_HPP
 #define URI_PARSERS_RELATIVE_REF_HPP
 
-#include <uri/parsers/components.hpp>
+#include <ssiloti/uri/parsers/components.hpp>
 
-namespace uri { namespace parsers {
-
-template <typename Iterator, typename String>
-struct path_noscheme
-    : public segments<Iterator, String>
-    , boost::spirit::qi::grammar<Iterator, String()>
+namespace uri
 {
-    typedef String string_type;
-
-    path_noscheme() : path_noscheme::base_type(start, "path_noscheme")
+    namespace parsers
     {
-        using namespace boost::spirit;
 
-        // path-rootless = segment-nz *( "/" segment )
-        start %= qi::raw[
-            segment_nz_nc >> *(qi::char_("/") >> segment)
-        ];
-    }
-    
-private:
-    boost::spirit::qi::rule<Iterator, string_type()> start;
-};
+        template <typename Iterator, typename String>
+        struct path_noscheme
+            : public segments<Iterator, String>
+        , boost::spirit::qi::grammar<Iterator, String()>
+          {
+              typedef String string_type;
 
-template <typename Iterator, typename String>
-struct relative_part
-    : boost::spirit::qi::grammar<Iterator, boost::fusion::tuple<
-        boost::optional<basic_authority<String> >&,
-        String &
-    >()>
-{
-    typedef String string_type;
+              path_noscheme() : path_noscheme::base_type(start, "path_noscheme")
+        {
+            using namespace boost::spirit;
 
-    relative_part() : relative_part::base_type(start, "relative_part")
-    {
-        using namespace boost::spirit;
+            // path-rootless = segment-nz *( "/" segment )
+            start %= qi::raw[
+                         segment_nz_nc >> *(qi::char_("/") >> segment)
+                     ];
+        }
 
-        // path-empty = 0<pchar>
-        path_empty %= qi::eps;
+        private:
+        boost::spirit::qi::rule<Iterator, string_type()> start;
+          };
 
-        // hier-part = "//" authority path-abempty / path-absolute / path-rootless / path-empty
-        // Use eps(false) to force the authority attribute to be optional
-        // Boost <= 1.45 was a-ok without it *shrug*
-        start %=
+        template <typename Iterator, typename String>
+        struct relative_part
+            : boost::spirit::qi::grammar<Iterator, boost::fusion::tuple<
+              boost::optional<basic_authority<String> >&,
+              String &
+          >()>
+          {
+              typedef String string_type;
+
+              relative_part() : relative_part::base_type(start, "relative_part")
+        {
+            using namespace boost::spirit;
+
+            // path-empty = 0<pchar>
+            path_empty %= qi::eps;
+
+            // hier-part = "//" authority path-abempty / path-absolute / path-rootless / path-empty
+            // Use eps(false) to force the authority attribute to be optional
+            // Boost <= 1.45 was a-ok without it *shrug*
+            start %=
                 (qi::lit("//") >> (qi::eps(false) | authority) >> path_abempty)
-            |
+                |
                 (
                     qi::attr(boost::optional<basic_authority<string_type> >())
-                >>  (path_absolute | path_noscheme | path_empty)
+                    >> (path_absolute | path_noscheme | path_empty)
                 );
-    }
+        }
 
-private:
-    authority<Iterator, string_type> authority;
+        private:
+        authority<Iterator, string_type> authority;
 
-    path_abempty<Iterator, string_type> path_abempty;
-    path_absolute<Iterator, string_type> path_absolute;
-    path_noscheme<Iterator, string_type> path_noscheme;
+        path_abempty<Iterator, string_type> path_abempty;
+        path_absolute<Iterator, string_type> path_absolute;
+        path_noscheme<Iterator, string_type> path_noscheme;
 
-    boost::spirit::qi::rule<Iterator, string_type()> path_empty;
+        boost::spirit::qi::rule<Iterator, string_type()> path_empty;
 
-    boost::spirit::qi::rule<Iterator, boost::fusion::tuple<
+        boost::spirit::qi::rule<Iterator, boost::fusion::tuple<
         boost::optional<basic_authority<string_type> >&,
         string_type &
-    >()> start;
-};
+        >()> start;
+          };
 
-template <typename Iterator, typename String>
-struct relative_ref {
+        template <typename Iterator, typename String>
+        struct relative_ref
+        {
 // TODO
-};
+        };
 
-} }
+    }
+}
 
 #endif

@@ -7,12 +7,12 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-#include <http/headers.hpp>
-#include <http/basic_message.hpp>
-#include <http/basic_request.hpp>
+#include <ssiloti/http/headers.hpp>
+#include <ssiloti/http/basic_message.hpp>
+#include <ssiloti/http/basic_request.hpp>
 
-#include <http/parsers/headers.hpp>
-#include <http/generators/headers.hpp>
+#include <ssiloti/http/parsers/headers.hpp>
+#include <ssiloti/http/generators/headers.hpp>
 
 #include <boost/fusion/container/map.hpp>
 

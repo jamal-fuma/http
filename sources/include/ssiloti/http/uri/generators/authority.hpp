@@ -11,7 +11,7 @@
 #ifndef URI_GENERATORS_AUTHORITY_HPP
 #define URI_GENERATORS_AUTHORITY_HPP
 
-#include <uri/basic_authority.hpp>
+#include <ssiloti/uri/basic_authority.hpp>
 
 #include <boost/spirit/home/karma/directive/buffer.hpp>
 #include <boost/spirit/home/karma/string.hpp>
@@ -20,26 +20,30 @@
 #include <boost/spirit/home/karma/operator.hpp>
 #include <boost/spirit/home/karma/nonterminal/grammar.hpp>
 
-namespace uri { namespace generators {
-
-template <typename Iterator, class String>
-struct authority : public boost::spirit::karma::grammar<Iterator, basic_authority<String>()>
+namespace uri
 {
-    typedef String string_type;
-
-    authority() : authority::base_type(start, "authority")
+    namespace generators
     {
-        using namespace boost::spirit::karma;
 
-        authority_rule %= -(string << lit('@')) << string << buffer[-(lit(':') << uint_)];
-        start %= authority_rule.alias();
+        template <typename Iterator, class String>
+        struct authority : public boost::spirit::karma::grammar<Iterator, basic_authority<String>()>
+        {
+            typedef String string_type;
+
+            authority() : authority::base_type(start, "authority")
+        {
+            using namespace boost::spirit::karma;
+
+            authority_rule %= -(string << lit('@')) << string << buffer[-(lit(':') << uint_)];
+            start %= authority_rule.alias();
+        }
+
+        private:
+        boost::spirit::karma::rule<Iterator, typename detail::const_authority_tuple<string_type>::type()> authority_rule;
+        boost::spirit::karma::rule<Iterator, basic_authority<string_type>()> start;
+        };
+
     }
-
-private:
-    boost::spirit::karma::rule<Iterator, typename detail::const_authority_tuple<string_type>::type()> authority_rule;
-    boost::spirit::karma::rule<Iterator, basic_authority<string_type>()> start;
-};
-
-} }
+}
 
 #endif

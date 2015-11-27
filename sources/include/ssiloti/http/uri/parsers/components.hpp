@@ -12,8 +12,8 @@
 #ifndef URI_PARSERS_COMPONENTS_HPP
 #define URI_PARSERS_COMPONENTS_HPP
 
-#include <uri/parsers/authority.hpp>
-#include <uri/parsers/segments.hpp>
+#include <ssiloti/uri/parsers/authority.hpp>
+#include <ssiloti/uri/parsers/segments.hpp>
 
 #include <boost/spirit/home/qi/string/lit.hpp>
 #include <boost/spirit/home/qi/auxiliary/attr.hpp>
@@ -24,170 +24,174 @@
 
 #include <boost/optional.hpp>
 
-namespace uri { namespace parsers {
-
-template <typename Iterator, typename String>
-struct path_abempty
-    : public segments<Iterator, String>
-    , boost::spirit::qi::grammar<Iterator, String()>
+namespace uri
 {
-    typedef String string_type;
-
-    path_abempty() : path_abempty::base_type(start, "path_abempty")
+    namespace parsers
     {
-        using namespace boost::spirit;
 
-        // path-abempty  = *( "/" segment )
-        start %= qi::raw[*(qi::char_("/") >> this->segment)];
-    }
+        template <typename Iterator, typename String>
+        struct path_abempty
+            : public segments<Iterator, String>
+        , boost::spirit::qi::grammar<Iterator, String()>
+          {
+              typedef String string_type;
 
-private:
-    boost::spirit::qi::rule<Iterator, string_type()> start;
-};
+              path_abempty() : path_abempty::base_type(start, "path_abempty")
+        {
+            using namespace boost::spirit;
 
-template <typename Iterator, typename String>
-struct path_absolute
-    : public segments<Iterator, String>
-    , boost::spirit::qi::grammar<Iterator, String()>
-{
-    typedef String string_type;
+            // path-abempty  = *( "/" segment )
+            start %= qi::raw[*(qi::char_("/") >> this->segment)];
+        }
 
-    path_absolute() : path_absolute::base_type(start, "path_absolute")
-    {
-        using namespace boost::spirit;
+        private:
+        boost::spirit::qi::rule<Iterator, string_type()> start;
+          };
 
-        // path-absolute = "/" [ segment-nz *( "/" segment ) ]
-        start %= qi::raw[
-                qi::char_("/")
-            >>  -(this->segment_nz >> *(qi::char_("/") >> this->segment))
-        ];
-    }
+        template <typename Iterator, typename String>
+        struct path_absolute
+            : public segments<Iterator, String>
+        , boost::spirit::qi::grammar<Iterator, String()>
+          {
+              typedef String string_type;
 
-private:
-    boost::spirit::qi::rule<Iterator, string_type()> start;
-};
+              path_absolute() : path_absolute::base_type(start, "path_absolute")
+        {
+            using namespace boost::spirit;
 
-template <typename Iterator, typename String>
-struct path_rootless
-    : public segments<Iterator, String>
-    , boost::spirit::qi::grammar<Iterator, String()>
-{
-    typedef String string_type;
+            // path-absolute = "/" [ segment-nz *( "/" segment ) ]
+            start %= qi::raw[
+                         qi::char_("/")
+                         >>  -(this->segment_nz >> *(qi::char_("/") >> this->segment))
+                     ];
+        }
 
-    path_rootless() : path_rootless::base_type(start, "path_rootless")
-    {
-        using namespace boost::spirit;
+        private:
+        boost::spirit::qi::rule<Iterator, string_type()> start;
+          };
 
-        // path-rootless = segment-nz *( "/" segment )
-        start %= qi::raw[
-            this->segment_nz >> *(qi::char_("/") >> this->segment)
-        ];
-    }
-    
-private:
-    boost::spirit::qi::rule<Iterator, string_type()> start;
-};
+        template <typename Iterator, typename String>
+        struct path_rootless
+            : public segments<Iterator, String>
+        , boost::spirit::qi::grammar<Iterator, String()>
+          {
+              typedef String string_type;
 
-template <typename Iterator, typename String>
-struct query
-    : characters<Iterator, String>
-    , boost::spirit::qi::grammar<Iterator, String()>
-{
-    typedef String string_type;
+              path_rootless() : path_rootless::base_type(start, "path_rootless")
+        {
+            using namespace boost::spirit;
 
-    query() : query::base_type(start, "query")
-    {
-        using namespace boost::spirit;
+            // path-rootless = segment-nz *( "/" segment )
+            start %= qi::raw[
+                         this->segment_nz >> *(qi::char_("/") >> this->segment)
+                     ];
+        }
 
-        // query = *( pchar / "/" / "?" )
-        start %= qi::raw[*(this->pchar | qi::char_("/?"))];
-    }
-    
-private:
-    boost::spirit::qi::rule<Iterator, string_type()> start;
-};
+        private:
+        boost::spirit::qi::rule<Iterator, string_type()> start;
+          };
 
-template <typename Iterator, typename String>
-struct fragment
-    : characters<Iterator, String>
-    , boost::spirit::qi::grammar<Iterator, String()>
-{
-    typedef String string_type;
+        template <typename Iterator, typename String>
+        struct query
+            : characters<Iterator, String>
+        , boost::spirit::qi::grammar<Iterator, String()>
+          {
+              typedef String string_type;
 
-    fragment() : fragment::base_type(start, "fragment")
-    {
-        using namespace boost::spirit;
+              query() : query::base_type(start, "query")
+        {
+            using namespace boost::spirit;
 
-        // fragment = *( pchar / "/" / "?" )
-        start %= qi::raw[*(this->pchar | qi::char_("/?"))];
-    }
-    
-private:
-    boost::spirit::qi::rule<Iterator, string_type()> start;
-};
+            // query = *( pchar / "/" / "?" )
+            start %= qi::raw[*(this->pchar | qi::char_("/?"))];
+        }
 
-template <typename Iterator, typename String>
-struct scheme
-    : characters<Iterator, String>
-    , boost::spirit::qi::grammar<Iterator, String()>
-{
-    typedef String string_type;
+        private:
+        boost::spirit::qi::rule<Iterator, string_type()> start;
+          };
 
-    scheme() : scheme::base_type(start, "scheme")
-    {
-        using namespace boost::spirit;
+        template <typename Iterator, typename String>
+        struct fragment
+            : characters<Iterator, String>
+        , boost::spirit::qi::grammar<Iterator, String()>
+          {
+              typedef String string_type;
 
-        // scheme = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
-        start %= qi::alpha >> *(qi::alnum | qi::char_("+.-"));
-    }
-    
-private:
-    boost::spirit::qi::rule<Iterator, string_type()> start;
-};
+              fragment() : fragment::base_type(start, "fragment")
+        {
+            using namespace boost::spirit;
 
-template <typename Iterator, typename String>
-struct hier_part
-    : boost::spirit::qi::grammar<Iterator, boost::fusion::tuple<
-        boost::optional<basic_authority<String> >&,
-        String &
-    >()>
-{
-    typedef String string_type;
+            // fragment = *( pchar / "/" / "?" )
+            start %= qi::raw[*(this->pchar | qi::char_("/?"))];
+        }
 
-    hier_part() : hier_part::base_type(start_, "hier_part")
-    {
-        using namespace boost::spirit;
+        private:
+        boost::spirit::qi::rule<Iterator, string_type()> start;
+          };
 
-        // path-empty = 0<pchar>
-        path_empty_ %= qi::eps;
+        template <typename Iterator, typename String>
+        struct scheme
+            : characters<Iterator, String>
+        , boost::spirit::qi::grammar<Iterator, String()>
+          {
+              typedef String string_type;
 
-        // hier-part = "//" authority path-abempty / path-absolute / path-rootless / path-empty
-        // Use eps(false) to force the authority attribute to be optional
-        // Boost <= 1.45 was a-ok without it *shrug*
-        start_ %=
+              scheme() : scheme::base_type(start, "scheme")
+        {
+            using namespace boost::spirit;
+
+            // scheme = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+            start %= qi::alpha >> *(qi::alnum | qi::char_("+.-"));
+        }
+
+        private:
+        boost::spirit::qi::rule<Iterator, string_type()> start;
+          };
+
+        template <typename Iterator, typename String>
+        struct hier_part
+            : boost::spirit::qi::grammar<Iterator, boost::fusion::tuple<
+              boost::optional<basic_authority<String> >&,
+              String &
+          >()>
+          {
+              typedef String string_type;
+
+              hier_part() : hier_part::base_type(start_, "hier_part")
+        {
+            using namespace boost::spirit;
+
+            // path-empty = 0<pchar>
+            path_empty_ %= qi::eps;
+
+            // hier-part = "//" authority path-abempty / path-absolute / path-rootless / path-empty
+            // Use eps(false) to force the authority attribute to be optional
+            // Boost <= 1.45 was a-ok without it *shrug*
+            start_ %=
                 (qi::lit("//") >> (qi::eps(false) | authority_) >> path_abempty_)
-            |
+                |
                 (
                     qi::attr(boost::optional<basic_authority<string_type> >())
-                >>  (path_absolute_ | path_rootless_ | path_empty_)
+                    >> (path_absolute_ | path_rootless_ | path_empty_)
                 );
-    }
+        }
 
-private:
-    authority<Iterator, string_type> authority_;
+        private:
+        authority<Iterator, string_type> authority_;
 
-    path_abempty<Iterator, string_type> path_abempty_;
-    path_absolute<Iterator, string_type> path_absolute_;
-    path_rootless<Iterator, string_type> path_rootless_;
+        path_abempty<Iterator, string_type> path_abempty_;
+        path_absolute<Iterator, string_type> path_absolute_;
+        path_rootless<Iterator, string_type> path_rootless_;
 
-    boost::spirit::qi::rule<Iterator, string_type()> path_empty_;
+        boost::spirit::qi::rule<Iterator, string_type()> path_empty_;
 
-    boost::spirit::qi::rule<Iterator, boost::fusion::tuple<
+        boost::spirit::qi::rule<Iterator, boost::fusion::tuple<
         boost::optional<basic_authority<string_type> >&,
         string_type &
-    >()> start_;
-};
+        >()> start_;
+          };
 
-} }
+    }
+}
 
 #endif
