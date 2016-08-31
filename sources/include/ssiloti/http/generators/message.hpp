@@ -32,6 +32,7 @@ namespace http
             {
                 std::copy(header.first.begin(), header.first.end(), sink);
                 *sink++ = ':';
+                *sink++ = ' ';
                 if(!header.second.generate(sink))
                     return false;
                 *sink++ = '\r';
