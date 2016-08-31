@@ -28,6 +28,7 @@ struct FixtureData
 };
 
 
+BOOST_FIXTURE_TEST_SUITE(BasicSuite, FixtureData)
 BOOST_AUTO_TEST_CASE(should_parse_request)
 {
     typedef http::basic_request<boost::mpl::map0<>, std::string> request_t;
@@ -56,7 +57,6 @@ BOOST_AUTO_TEST_CASE(should_generate_request)
     BOOST_CHECK(request.generate_start_line(std::ostream_iterator<char>(sink)));
     BOOST_CHECK_EQUAL(sink.str(), std::string("GET * HTTP/1.1"));
 }
-BOOST_FIXTURE_TEST_SUITE(BasicSuite, FixtureData)
 
 BOOST_AUTO_TEST_CASE(should_match_hello_fixture)
 {
