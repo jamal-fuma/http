@@ -12,7 +12,7 @@ TEST_DEFINES	= $(SOURCE_DEFINES) \
 				  -DBOOST_TEST_DYN_LINK="1"
 
  # where there is a choice, we prefer to statically link test cases
-LINKER_FLAGS	= -static \
+LINKER_FLAGS	= \
 				  $(BOOST_LDFLAGS) \
 				  $(PTHREAD_LIBS) \
 				  $(POSTGRES_LDFLAGS)
