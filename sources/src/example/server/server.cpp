@@ -26,7 +26,7 @@ class example_server : public http::async_string_server
         virtual void incoming_request(http::async_string_server::context_type ctx)
         {
             boost::shared_ptr<http::string_response> response(boost::make_shared<http::string_response>());
-            response->body = "Hello, World";
+            response->body = "Hello, World\r\n\r\n";
             response->headers.at<http::headers::content_type>() = "text/plain";
             ctx.write_response(response);
         }
