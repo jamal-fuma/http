@@ -9,7 +9,7 @@
 //
 #include <ssiloti/http/parsers/message_state.hpp>
 
-#include <boost/test/unit_test.hpp>
+#include "TestHelper.hpp"
 
 #include <string>
 #include <vector>
@@ -81,7 +81,14 @@ namespace http
     }
 }
 
-void test_message_parser()
+struct FixtureData
+    : public Fuma::Test::Fixture
+{
+};
+
+BOOST_FIXTURE_TEST_SUITE(BasicSuite, FixtureData)
+
+BOOST_AUTO_TEST_CASE(should_produce_message)
 {
     const std::string test_string("GET index.html HTTP/1.1\r\nAccept: text/html\r\nAllow: text/html\r\n\r\n");
     std::vector<std::string> headers;
@@ -120,10 +127,4 @@ void test_message_parser()
         }
     }
 }
-
-void init_basic_message_parser_suite(int, char * [])
-{
-    boost::unit_test::test_suite * test = BOOST_TEST_SUITE("basic_message_parser");
-    test->add(BOOST_TEST_CASE(&test_message_parser));
-    boost::unit_test::framework::master_test_suite().add(test);
-}
+BOOST_AUTO_TEST_SUITE_END()
